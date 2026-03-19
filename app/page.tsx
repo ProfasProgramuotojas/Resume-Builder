@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Resume } from "./types/resumeType";
 import { EditPanel } from "./components/editPanel/EditPanel";
 import { Button } from "./components/Button";
-import { exportResumeToDocxBlob } from "./components/ExportDocx";
+import { ExportDocx } from "./components/ExportDocx";
 
 const d: Resume = {
   title: "Mykolas Ločas",
@@ -102,20 +102,7 @@ export default function Home() {
         <EditPanel doc={doc} setDoc={setDoc} />
         <PreviewPanel doc={doc} />
       </div>
-      <Button
-        onClick={async () => {
-          const blob = await exportResumeToDocxBlob(doc);
-
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `${doc?.title || "resume"}.docx`;
-          a.click();
-          URL.revokeObjectURL(url);
-        }}
-      >
-        Export
-      </Button>
+      <ExportDocx doc={doc} />
     </main>
   );
 }
