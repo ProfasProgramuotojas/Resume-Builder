@@ -23,6 +23,6 @@ export type Resume = {
   phone: string;
   email: string;
   location: string;
-  link: string;
+  link: {label: string, url: string};
   sections: SectionType[];
 } | null;

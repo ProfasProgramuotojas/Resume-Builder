@@ -11,7 +11,7 @@ export const TextArea = ({
     <div className="w-full">
       <span>{label}</span>
       <textarea
-        className="border w-full"
+        className="border w-full rounded-xs"
         value={value}
         onChange={(e) => {
           if (onChange) onChange(e.target.value);

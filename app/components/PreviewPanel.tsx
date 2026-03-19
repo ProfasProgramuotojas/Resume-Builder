@@ -37,7 +37,9 @@ const SubSection = ({ ss }: { ss: SubSectionType }) => {
       <div className="flex justify-between">
         <h3>{companyName}</h3>
         <h4>
-          {dateFrom} – {dateTo}
+          {dateFrom}
+          {dateFrom && dateTo && " – "}
+          {dateTo}
         </h4>
       </div>
       <div className="flex justify-between">
@@ -60,24 +62,32 @@ const Section = ({ s }: { s: SectionType }) => {
     <section>
       <h2>{title}</h2>
       <hr />
-      {subSections.map((ss: SubSectionType) => (
-        <SubSection ss={ss} key={ss.companyName} />
+      {subSections.map((ss: SubSectionType, i) => (
+        <SubSection ss={ss} key={i} />
       ))}
     </section>
   );
 };
 
 export const PreviewPanel = ({ doc }: { doc: Resume }) => {
-  if (!doc) return;
+  if (!doc) return null;
   const { title, phone, email, link, location, sections } = doc;
-  const contactItems = [location, email, phone, link].filter(Boolean);
+  const contactItems = [location, email, phone].filter(Boolean);
   return (
     <Document>
       <h1>{title}</h1>
-      <h2>{contactItems.join(" | ")}</h2>
+      <h2>
+        {contactItems.join(" | ")}
+        {link.url && (
+          <>
+            {" | "}
+            <a href={link.url}>{link.label}</a>
+          </>
+        )}
+      </h2>
       <hr />
-      {sections.map((s) => (
-        <Section s={s} key={s.title} />
+      {sections.map((s, i) => (
+        <Section s={s} key={i} />
       ))}
     </Document>
   );

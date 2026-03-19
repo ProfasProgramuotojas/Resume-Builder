@@ -1,16 +1,18 @@
 "use client";
 
 import { PreviewPanel } from "./components/PreviewPanel";
-import { EditPanel } from "./components/EditPanel";
 import { useState } from "react";
 import { Resume } from "./types/resumeType";
+import { EditPanel } from "./components/editPanel/EditPanel";
+import { Button } from "./components/Button";
+import { exportResumeToDocxBlob } from "./components/ExportDocx";
 
 const d: Resume = {
   title: "Mykolas Ločas",
   phone: "+370 600 12345",
   email: "mykolas@career.io",
   location: "Vilnius, Lithuania",
-  link: "https://github.com/mykolas",
+  link: { label: "GitHub", url: "https://github.com/mykolas" },
   sections: [
     {
       title: "Work Experience",
@@ -95,9 +97,25 @@ export default function Home() {
   const [doc, setDoc] = useState<Resume>(d);
 
   return (
-    <main className="flex w-full">
-      <EditPanel doc={doc} setDoc={setDoc} />
-      <PreviewPanel doc={doc} />
+    <main>
+      <div className="flex w-full">
+        <EditPanel doc={doc} setDoc={setDoc} />
+        <PreviewPanel doc={doc} />
+      </div>
+      <Button
+        onClick={async () => {
+          const blob = await exportResumeToDocxBlob(doc);
+
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${doc?.title || "resume"}.docx`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }}
+      >
+        Export
+      </Button>
     </main>
   );
 }

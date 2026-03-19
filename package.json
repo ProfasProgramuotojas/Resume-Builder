@@ -9,14 +9,21 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.40.0",
     "docx": "^9.6.1",
+    "file-saver": "^2.0.5",
     "html-to-docx": "^1.8.0",
+    "immer": "^11.1.4",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2",
     "next": "16.1.7",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/lodash.get": "^4.4.9",
+    "@types/lodash.set": "^4.3.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

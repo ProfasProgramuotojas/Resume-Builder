@@ -8,9 +8,9 @@ export const Input = ({
 } & React.InputHTMLAttributes<HTMLInputElement>) => {
   return (
     <div className="w-full">
-      <span>{label}</span>
+      <label>{label}</label>
       <input
-        className="border w-full"
+        className="border w-full px-1 rounded-xs"
         value={props.value}
         onChange={(e) => {
           if (onChange) onChange(e.target.value);

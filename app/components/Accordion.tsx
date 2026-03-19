@@ -3,10 +3,11 @@ import React, { useState } from "react";
 type ItemProps = {
   label: React.ReactNode;
   children: React.ReactNode;
+  actions?: React.ReactNode;
 };
 
-export const AccordionItem = ({ children }: ItemProps) => {
-  return children;
+export const AccordionItem = ({ label, children, actions }: ItemProps) => {
+  return <>{children}</>;
 };
 
 export const Accordion = ({ children }: { children: React.ReactNode }) => {
@@ -26,10 +27,13 @@ export const Accordion = ({ children }: { children: React.ReactNode }) => {
         return (
           <div key={index} className="border rounded">
             <button
-              className="w-full text-left p-3 bg-gray-100 flex justify-between items-center"
+              className="w-full text-left p-2 bg-gray-50 flex justify-between items-center"
               onClick={() => setActiveIndex(isOpen ? null : index)}
             >
-              <span>{item.props.label}</span>
+              <span className="flex gap-2 items-center">
+                <div className="flex">{item.props.actions}</div>
+                {item.props.label}
+              </span>
               <span>{isOpen ? "−" : "+"}</span>
             </button>
 
