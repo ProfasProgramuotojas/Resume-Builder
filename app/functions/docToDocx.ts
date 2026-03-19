@@ -20,6 +20,8 @@ const margin = {
 
 const noBorder = { style: "none", size: 0, color: "FFFFFF" } as const;
 
+const fullWidth = { size: `${100}%` } as const;
+
 const bottomBorder = {
   top: noBorder,
   left: noBorder,
@@ -31,28 +33,31 @@ const bottomBorder = {
   },
 } as const;
 
-const newParagraph = (text: string, size: number) =>
-  new Paragraph({
-    children: [
-      new TextRun({
-        text: text,
-        size: `${size}pt`,
-      }),
-    ],
+const styling = {
+  h1: { size: 50 },
+  h2: { size: 28 },
+  h3: { size: 26, bold: true },
+  h4: { size: 24, bold: true },
+  h5: { size: 24, italics: true },
+  text: { size: 24 },
+} as const;
+
+type StylingKey = keyof typeof styling;
+
+const createText = (text: string, style: StylingKey) =>
+  new TextRun({
+    text,
+    ...styling[style],
   });
 
-// const newText = (text:string) =>new TextRun({
-//         text: text,
-//         size: `${size}pt`,
-//       }),
+const createTitle = (title: string) =>
+  new Paragraph({ children: [new TextRun({ text: title, ...styling.h5 })] });
+
 const createSubSection = (subSection: SubSectionType) => {};
 
 const createSection = (section: SectionType) => {
   return new Table({
-    width: {
-      size: 5000, // 100%
-      type: WidthType.PERCENTAGE,
-    },
+    width: fullWidth,
     rows: [
       new TableRow({
         children: [
@@ -60,12 +65,7 @@ const createSection = (section: SectionType) => {
             borders: bottomBorder,
             children: [
               new Paragraph({
-                children: [
-                  new TextRun({
-                    text: section.title,
-                    size: `${14}pt`,
-                  }),
-                ],
+                children: [createText(section.title, "h2")],
               }),
             ],
           }),
@@ -95,7 +95,7 @@ export const docToDocx = (doc: Resume) => {
           },
         },
         children: [
-          newParagraph("Title", 25),
+          createTitle(doc.title),
           ...doc.sections.flatMap((section) => createSection(section)),
         ],
       },
