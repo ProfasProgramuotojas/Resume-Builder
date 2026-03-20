@@ -1,6 +1,7 @@
 import {
   Document,
   ExternalHyperlink,
+  HyperlinkType,
   ITableCellBorders,
   Packer,
   Paragraph,
@@ -92,10 +93,13 @@ const createTableCell = ({
   });
 };
 
-const createParagraph = (children: TextRun[], align?: "left" | "right") => {
+const createParagraph = (
+  children: (TextRun | ExternalHyperlink)[],
+  align?: "left" | "right",
+) => {
   return new Paragraph({
     alignment: align,
-    children: children,
+    children,
   });
 };
 
@@ -118,35 +122,70 @@ const createList = (bulletPoints: BulletPointType[]) => {
 };
 
 const createSubSection = (subSection: SubSectionType) => {
-  const cellsRow1 = [
-    createTableCell({
-      children: [createParagraph([createText(subSection.companyName, "h3")])],
-    }),
-    createTableCell({
-      children: [
-        createParagraph(
-          [createText(`${subSection.dateFrom} – ${subSection.dateTo}`, "h4")],
-          "right",
-        ),
-      ],
-    }),
-  ];
+  const row1Cells = [];
 
-  const cellsRow2 = [
-    createTableCell({
-      children: [createParagraph([createText(subSection.role, "h5")])],
-    }),
-    createTableCell({
-      children: [
-        createParagraph([createText(subSection.location, "h5")], "right"),
-      ],
-    }),
-  ];
+  if (subSection.companyName) {
+    row1Cells.push(
+      createTableCell({
+        children: [createParagraph([createText(subSection.companyName, "h3")])],
+      }),
+    );
+  }
 
-  const desc = createParagraph([createText(subSection.desc, "text")]);
+  if (subSection.dateFrom || subSection.dateTo) {
+    row1Cells.push(
+      createTableCell({
+        children: [
+          createParagraph(
+            [
+              createText(
+                [subSection.dateFrom, subSection.dateTo]
+                  .filter(Boolean)
+                  .join(" – "),
+                "h4",
+              ),
+            ],
+            "right",
+          ),
+        ],
+      }),
+    );
+  }
 
-  const bullets = createList(subSection.bulletPoints);
-  return [createTable(cellsRow1), createTable(cellsRow2), desc, ...bullets];
+  const row2Cells = [];
+
+  if (subSection.role) {
+    row2Cells.push(
+      createTableCell({
+        children: [createParagraph([createText(subSection.role, "h5")])],
+      }),
+    );
+  }
+
+  if (subSection.location) {
+    row2Cells.push(
+      createTableCell({
+        children: [
+          createParagraph([createText(subSection.location, "h5")], "right"),
+        ],
+      }),
+    );
+  }
+
+  const elements = [];
+
+  if (row1Cells.length) elements.push(createTable(row1Cells));
+  if (row2Cells.length) elements.push(createTable(row2Cells));
+
+  if (subSection.desc) {
+    elements.push(createParagraph([createText(subSection.desc, "text")]));
+  }
+
+  if (subSection.bulletPoints?.length) {
+    elements.push(...createList(subSection.bulletPoints));
+  }
+
+  return elements;
 };
 
 const createSection = (section: SectionType) => {
@@ -159,6 +198,41 @@ const createSection = (section: SectionType) => {
     createTable(cell),
     ...section.subSections.flatMap((ss) => [...createSubSection(ss)]),
   ];
+};
+
+const createContacts = (
+  phone: string,
+  email: string,
+  location: string,
+  linkLabel: string,
+  linkUrl: string,
+) => {
+  const contacts = [location, email, phone].filter(Boolean);
+  const contactString = contacts.join(" | ");
+
+  const children: (TextRun | ExternalHyperlink)[] = [
+    createText(contactString, "h2"),
+  ];
+
+  if (linkLabel && linkUrl) {
+    children.push(createText(" | ", "h2"));
+    children.push(
+      new ExternalHyperlink({
+        link: linkUrl,
+        children: [createText(linkLabel, "h2")],
+      }),
+    );
+  }
+
+  const paragraph = createParagraph(children);
+
+  return createTable([
+    createTableCell({
+      children: [paragraph],
+      colspan: 2,
+      borders: bottomBorder,
+    }),
+  ]);
 };
 
 const createTitle = (title: string) =>
@@ -185,6 +259,13 @@ export const docToDocx = (doc: Resume) => {
         },
         children: [
           createTitle(doc.title),
+          createContacts(
+            doc.phone,
+            doc.email,
+            doc.location,
+            doc.link.label,
+            doc.link.url,
+          ),
           ...doc.sections.flatMap((section) => createSection(section)),
         ],
       },

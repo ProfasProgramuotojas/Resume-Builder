@@ -6,11 +6,22 @@ import {
 } from "../types/resumeType";
 
 import "../styles/resumeStyles.css";
+import { Input } from "./Input";
+import { Slider } from "./Slider";
+import { useState } from "react";
 
-const Document = ({ children }: { children: React.ReactNode }) => {
+const Document = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
-    <div className="w-[794px] h-[1123px] shadow-xl">
-      <div className="py-24 px-18 flex flex-col">{children}</div>
+    <div className={`w-[794px] h-[1123px] shadow-xl ${className}`}>
+      <div className="py-24 px-18 flex flex-col overflow-hidden border-b border-red-100">
+        {children}
+      </div>
     </div>
   );
 };
@@ -72,23 +83,36 @@ const Section = ({ s }: { s: SectionType }) => {
 export const PreviewPanel = ({ doc }: { doc: Resume }) => {
   if (!doc) return null;
   const { title, phone, email, link, location, sections } = doc;
+  const [zoom, setZoom] = useState(100);
   const contactItems = [location, email, phone].filter(Boolean);
   return (
-    <Document>
-      <h1>{title}</h1>
-      <h2>
-        {contactItems.join(" | ")}
-        {link.url && (
-          <>
-            {" | "}
-            <a href={link.url}>{link.label}</a>
-          </>
-        )}
-      </h2>
-      <hr />
-      {sections.map((s, i) => (
-        <Section s={s} key={i} />
-      ))}
-    </Document>
+    <div>
+      <Slider value={zoom} min={50} max={200} step={5} onChange={setZoom} />
+      <div className="overflow-hidden">
+        <div
+          style={{
+            transform: `scale(${zoom / 100})`,
+            transformOrigin: "top center",
+          }}
+        >
+          <Document className="bg-white">
+            <h1>{title}</h1>
+            <h2>
+              {contactItems.join(" | ")}
+              {link.url && (
+                <>
+                  {" | "}
+                  <a href={link.url}>{link.label}</a>
+                </>
+              )}
+            </h2>
+            <hr />
+            {sections.map((s, i) => (
+              <Section s={s} key={i} />
+            ))}
+          </Document>
+        </div>
+      </div>
+    </div>
   );
 };

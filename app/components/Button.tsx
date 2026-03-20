@@ -5,7 +5,7 @@ export const Button = ({
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <button
-      className={`p-1 rounded-xs border hover:cursor-pointer ${props.className}`}
+      className={`p-1 rounded-xs border hover:cursor-pointer bg-white ${props.className}`}
       {...props}
     ></button>
   );

@@ -8,7 +8,7 @@ export const Card = ({
 } & React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <>
-      <span className="font-bold">{label}</span>
+      {label && <span className="font-bold">{label}</span>}
       <div {...props}>{children}</div>
     </>
   );

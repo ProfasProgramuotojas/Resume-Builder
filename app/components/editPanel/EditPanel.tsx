@@ -7,6 +7,9 @@ import { Section } from "./Section";
 import { Button } from "../Button";
 import { IconSwitchVertical, IconTrash } from "@tabler/icons-react";
 import { IconButton } from "../IconButton";
+import { ExportDocx } from "../ExportDocx";
+import { ExportJson } from "../ExportJSON";
+import { ImportJson } from "../ImportJson";
 
 export type SetDocType = React.Dispatch<React.SetStateAction<Resume>>;
 
@@ -27,10 +30,21 @@ export const EditPanel = ({
   const { update, add, remove, switchItems } = useUpdateState<Resume>(setDoc);
 
   return (
-    <Card className="w-1/2 p-5 flex flex-col gap-2">
-      <h1>Edit Resume</h1>
-
-      <div className="grid grid-cols-2 gap-x-2">
+    <Card className="w-1/2 flex flex-col gap-2">
+      <div className="flex justify-between">
+        <h1>Edit Resume</h1>
+        <div className="flex gap-2">
+          <ExportDocx doc={doc} />
+          <ExportJson doc={doc} />
+          <ImportJson onImport={(d) => setDoc(d)} />
+        </div>
+      </div>
+      <Input
+        label="Title"
+        value={doc.title}
+        onChange={(v) => update("title", v)}
+      />
+      <div className="grid grid-cols-2 gap-x-2 -mt-2">
         <Input
           label="Location"
           value={doc.location}

@@ -18,7 +18,7 @@ export const BulletPoint = ({
   const { update } = useUpdateState<Resume>(setDoc);
   return (
     <Card className="flex flex-col">
-      <label>{label}</label>
+      <label className="font-bold">{label}</label>
       <div className="flex gap-2">
         <div className="w-1/7">
           <Input

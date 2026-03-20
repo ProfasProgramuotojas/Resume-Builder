@@ -10,7 +10,7 @@ export const Input = ({
     <div className="w-full">
       <label>{label}</label>
       <input
-        className="border w-full px-1 rounded-xs"
+        className="border w-full px-2 py-1 rounded-xs bg-white"
         value={props.value}
         onChange={(e) => {
           if (onChange) onChange(e.target.value);

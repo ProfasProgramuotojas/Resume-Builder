@@ -18,5 +18,5 @@ export const ExportDocx = ({ doc }: { doc: Resume }) => {
     window.URL.revokeObjectURL(url);
   };
 
-  return <Button onClick={handleExport}>Export to docx</Button>;
+  return <Button onClick={handleExport}>Save as Docx</Button>;
 };
