@@ -8,9 +8,15 @@ import {
   TableCell,
   TableRow,
   TextRun,
+  VerticalAlign,
   WidthType,
 } from "docx";
-import { Resume, SectionType, SubSectionType } from "../types/resumeType";
+import {
+  BulletPointType,
+  Resume,
+  SectionType,
+  SubSectionType,
+} from "../types/resumeType";
 
 const margin = {
   top: `${1}in`,
@@ -34,13 +40,21 @@ const bottomBorder = {
   },
 } as const;
 
+const noBorders = {
+  top: noBorder,
+  left: noBorder,
+  right: noBorder,
+  bottom: noBorder,
+} as const;
+
 const styling = {
-  h1: { size: 50 },
-  h2: { size: 28 },
-  h3: { size: 26, bold: true },
-  h4: { size: 24, bold: true },
-  h5: { size: 24, italics: true },
-  text: { size: 24 },
+  h1: { size: `${25}pt` },
+  h2: { size: `${14}pt` },
+  h3: { size: `${13}pt`, bold: true },
+  h4: { size: `${12}pt`, bold: true },
+  h5: { size: `${12}pt`, italics: true },
+  text: { size: `${12}pt` },
+  gap: { size: 2 },
 } as const;
 
 type StylingKey = keyof typeof styling;
@@ -48,6 +62,7 @@ type StylingKey = keyof typeof styling;
 const createText = (text: string, style: StylingKey) =>
   new TextRun({
     text,
+
     ...styling[style],
   });
 
@@ -61,29 +76,93 @@ const createTable = (children: TableCell[]) =>
     ],
   });
 
-const createTableCell = (borders: ITableCellBorders, children: Paragraph[]) => {
+const createTableCell = ({
+  children,
+  colspan = 1,
+  borders = noBorders,
+}: {
+  children: Paragraph[];
+  colspan?: number;
+  borders?: ITableCellBorders;
+}) => {
   return new TableCell({
+    columnSpan: colspan,
     borders: borders,
     children: children,
   });
 };
 
-const createParagraph = (children: TextRun[]) => {
+const createParagraph = (children: TextRun[], align?: "left" | "right") => {
   return new Paragraph({
+    alignment: align,
     children: children,
   });
 };
 
-const createTitle = (title: string) =>
-  new Paragraph({ children: [new TextRun({ text: title, ...styling.h5 })] });
+const createList = (bulletPoints: BulletPointType[]) => {
+  return bulletPoints.map((bp) => {
+    const baseLeft = 360;
+    const baseHanging = 180;
 
-const createSubSection = (subSection: SubSectionType) => {};
+    return new Paragraph({
+      children: [createText(bp.text, "text")],
+      bullet: {
+        level: bp.increment,
+      },
+      indent: {
+        left: baseLeft * (bp.increment + 1),
+        hanging: baseHanging,
+      },
+    });
+  });
+};
+
+const createSubSection = (subSection: SubSectionType) => {
+  const cellsRow1 = [
+    createTableCell({
+      children: [createParagraph([createText(subSection.companyName, "h3")])],
+    }),
+    createTableCell({
+      children: [
+        createParagraph(
+          [createText(`${subSection.dateFrom} – ${subSection.dateTo}`, "h4")],
+          "right",
+        ),
+      ],
+    }),
+  ];
+
+  const cellsRow2 = [
+    createTableCell({
+      children: [createParagraph([createText(subSection.role, "h5")])],
+    }),
+    createTableCell({
+      children: [
+        createParagraph([createText(subSection.location, "h5")], "right"),
+      ],
+    }),
+  ];
+
+  const desc = createParagraph([createText(subSection.desc, "text")]);
+
+  const bullets = createList(subSection.bulletPoints);
+  return [createTable(cellsRow1), createTable(cellsRow2), desc, ...bullets];
+};
 
 const createSection = (section: SectionType) => {
   const paragraph = [createParagraph([createText(section.title, "h2")])];
-  const cell = [createTableCell(bottomBorder, paragraph)];
-  return createTable(cell);
+  const cell = [
+    createTableCell({ children: paragraph, colspan: 2, borders: bottomBorder }),
+  ];
+
+  return [
+    createTable(cell),
+    ...section.subSections.flatMap((ss) => [...createSubSection(ss)]),
+  ];
 };
+
+const createTitle = (title: string) =>
+  createParagraph([createText(title, "h1")]);
 
 export const docToDocx = (doc: Resume) => {
   if (!doc) return null;
