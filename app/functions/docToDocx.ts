@@ -1,6 +1,7 @@
 import {
   Document,
   ExternalHyperlink,
+  ITableCellBorders,
   Packer,
   Paragraph,
   Table,
@@ -50,29 +51,38 @@ const createText = (text: string, style: StylingKey) =>
     ...styling[style],
   });
 
+const createTable = (children: TableCell[]) =>
+  new Table({
+    width: fullWidth,
+    rows: [
+      new TableRow({
+        children: children,
+      }),
+    ],
+  });
+
+const createTableCell = (borders: ITableCellBorders, children: Paragraph[]) => {
+  return new TableCell({
+    borders: borders,
+    children: children,
+  });
+};
+
+const createParagraph = (children: TextRun[]) => {
+  return new Paragraph({
+    children: children,
+  });
+};
+
 const createTitle = (title: string) =>
   new Paragraph({ children: [new TextRun({ text: title, ...styling.h5 })] });
 
 const createSubSection = (subSection: SubSectionType) => {};
 
 const createSection = (section: SectionType) => {
-  return new Table({
-    width: fullWidth,
-    rows: [
-      new TableRow({
-        children: [
-          new TableCell({
-            borders: bottomBorder,
-            children: [
-              new Paragraph({
-                children: [createText(section.title, "h2")],
-              }),
-            ],
-          }),
-        ],
-      }),
-    ],
-  });
+  const paragraph = [createParagraph([createText(section.title, "h2")])];
+  const cell = [createTableCell(bottomBorder, paragraph)];
+  return createTable(cell);
 };
 
 export const docToDocx = (doc: Resume) => {
