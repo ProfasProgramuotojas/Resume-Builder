@@ -32,10 +32,6 @@ const defaultResume: Resume = {
             },
             {
               increment: 0,
-              text: "Improved performance and reduced load times through optimization techniques.",
-            },
-            {
-              increment: 0,
               text: "Collaborated with product and design teams to deliver new features.",
             },
             {
@@ -143,7 +139,6 @@ const defaultResume: Resume = {
             },
             { increment: 0, text: "Backend: Node.js, REST APIs" },
             { increment: 0, text: "Databases: SQL, basic NoSQL concepts" },
-            { increment: 0, text: "Tools: Git, CI/CD, testing frameworks" },
           ],
         },
       ],

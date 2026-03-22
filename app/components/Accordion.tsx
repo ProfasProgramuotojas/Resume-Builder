@@ -11,7 +11,7 @@ export const AccordionItem = ({ label, children, actions }: ItemProps) => {
 };
 
 export const Accordion = ({ children }: { children: React.ReactNode }) => {
-  const [activeIndex, setActiveIndex] = useState<number | null>(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const items = React.Children.toArray(children).filter(
     React.isValidElement,

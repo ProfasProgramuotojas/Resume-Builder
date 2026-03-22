@@ -18,8 +18,18 @@ const Document = ({
   className?: string;
 }) => {
   return (
-    <div className={`w-[794px] h-[1123px] shadow-xl ${className}`}>
-      <div className="py-24 px-18 flex flex-col overflow-hidden border-b border-red-100">
+    <div
+      className={`w-[794px] h-[1123px] shadow-xl overflow-hidden flex justify-center items-center ${className}`}
+    >
+      <div
+        className="
+          w-[calc(794px-(2*96px))]
+          h-[calc(1123px-(2*96px))]
+          overflow-hidden
+          flex flex-col
+          min-h-0
+        "
+      >
         {children}
       </div>
     </div>

@@ -27,10 +27,8 @@ export const Slider = ({
 
   return (
     <div style={{ width: "100%" }}>
-      <div style={{ textAlign: "center", fontSize: "14px" }}>
-        {currentValue}
-      </div>
       <input
+        className="accent-blue-300"
         type="range"
         min={min}
         max={max}
