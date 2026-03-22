@@ -13,11 +13,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`bg-blue-50`}>
-        <div className="flex xl:hidden w-screen h-screen justify-center items-center text-3xl">
+        <div className="flex lg:hidden w-screen h-screen justify-center items-center text-3xl">
           Please use a bigger screen
         </div>
 
-        <div className="hidden xl:block">{children}</div>
+        <div className="hidden lg:block">{children}</div>
       </body>
     </html>
   );
