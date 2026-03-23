@@ -22,7 +22,7 @@ export const BulletPoint = ({
       <div className="flex gap-2">
         <div className="w-1/7">
           <Input
-            onChange={(v) => update(`${path}.increment`, v)}
+            onChange={(v) => update(`${path}.increment`, Number(v))}
             label="increment"
             type={"number"}
             value={bp.increment}

@@ -12,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-blue-50`}>
+      <body className={`bg-background`}>
         <div className="flex lg:hidden w-screen h-screen justify-center items-center text-3xl">
           Please use a bigger screen
         </div>

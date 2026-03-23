@@ -28,10 +28,10 @@ export const Slider = ({
   };
 
   return (
-    <div style={{ width: "100%" }}>
+    <div className={"w-full"}>
       {label && <label>{label}</label>}
       <input
-        className="accent-blue-200"
+        className="accent-primary"
         type="range"
         min={min}
         max={max}

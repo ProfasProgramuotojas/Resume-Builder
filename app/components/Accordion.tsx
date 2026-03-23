@@ -27,7 +27,7 @@ export const Accordion = ({ children }: { children: React.ReactNode }) => {
         return (
           <div key={index} className="border rounded">
             <button
-              className="w-full text-left p-2 flex bg-blue-100 justify-between items-center cursor-pointer"
+              className="w-full rounded-md overflow-hidden text-left p-2 flex bg-secondary justify-between items-center cursor-pointer"
               onClick={() => setActiveIndex(isOpen ? null : index)}
             >
               <span className="flex gap-2 items-center">
