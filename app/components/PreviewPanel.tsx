@@ -13,22 +13,25 @@ import { useState } from "react";
 const Document = ({
   children,
   className,
+  doc,
 }: {
   children: React.ReactNode;
   className?: string;
+  doc: Resume;
 }) => {
+  if (!doc) return;
+  const marginInPixels = doc.margin * 96 * 2;
+
   return (
     <div
       className={`w-[794px] h-[1123px] shadow-xl overflow-hidden flex justify-center items-center ${className}`}
     >
       <div
-        className="
-          w-[calc(794px-(2*96px))]
-          h-[calc(1123px-(2*96px))]
-          overflow-hidden
-          flex flex-col
-          min-h-0
-        "
+        style={{
+          width: `calc(794px - ${marginInPixels}px)`,
+          height: `calc(1123px - ${marginInPixels}px)`,
+        }}
+        className="overflow-hidden flex flex-col min-h-0"
       >
         {children}
       </div>
@@ -77,12 +80,12 @@ const SubSection = ({ ss }: { ss: SubSectionType }) => {
   );
 };
 
-const Section = ({ s }: { s: SectionType }) => {
+const Section = ({ s, sb, sa }: { s: SectionType; sb: number; sa: number }) => {
   const { title, subSections } = s;
   return (
     <section>
-      <h2>{title}</h2>
-      <hr />
+      <h2 style={{ marginTop: `${sb}px` }}>{title}</h2>
+      <hr style={{ marginBottom: `${sa}px` }} />
       {subSections.map((ss: SubSectionType, i) => (
         <SubSection ss={ss} key={i} />
       ))}
@@ -97,7 +100,7 @@ export const PreviewPanel = ({ doc }: { doc: Resume }) => {
   const contactItems = [location, email, phone].filter(Boolean);
   return (
     <div>
-      <Slider value={zoom} min={50} max={200} step={5} onChange={setZoom} />
+      <Slider value={zoom} min={50} max={150} step={5} onChange={setZoom} />
       <div className="overflow-hidden">
         <div
           style={{
@@ -105,7 +108,7 @@ export const PreviewPanel = ({ doc }: { doc: Resume }) => {
             transformOrigin: "top center",
           }}
         >
-          <Document className="bg-white">
+          <Document className="bg-white" doc={doc}>
             <h1>{title}</h1>
             <h2>
               {contactItems.join(" | ")}
@@ -118,7 +121,7 @@ export const PreviewPanel = ({ doc }: { doc: Resume }) => {
             </h2>
             <hr />
             {sections.map((s, i) => (
-              <Section s={s} key={i} />
+              <Section s={s} key={i} sb={doc.spaceBefore} sa={doc.spaceAfter} />
             ))}
           </Document>
         </div>

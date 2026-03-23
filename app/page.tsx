@@ -9,6 +9,9 @@ import { ExportDocx } from "./components/ExportDocx";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
 const defaultResume: Resume = {
+  margin: 0.75,
+  spaceBefore: 0,
+  spaceAfter: 0,
   title: "Alex Morgan",
   phone: "+370 600 00000",
   email: "alex.morgan@example.com",

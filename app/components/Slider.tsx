@@ -6,6 +6,7 @@ type SliderProps = {
   step?: number;
   value?: number;
   onChange?: (value: number) => void;
+  label?: string;
 };
 
 export const Slider = ({
@@ -13,6 +14,7 @@ export const Slider = ({
   max = 100,
   step = 1,
   value = 50,
+  label,
   onChange,
 }: SliderProps) => {
   const [internalValue, setInternalValue] = useState(value);
@@ -27,8 +29,9 @@ export const Slider = ({
 
   return (
     <div style={{ width: "100%" }}>
+      {label && <label>{label}</label>}
       <input
-        className="accent-blue-300"
+        className="accent-blue-200"
         type="range"
         min={min}
         max={max}

@@ -1,7 +1,8 @@
 import {
   Document,
   ExternalHyperlink,
-  HyperlinkType,
+  IPageMarginAttributes,
+  IParagraphOptions,
   ITableCellBorders,
   Packer,
   Paragraph,
@@ -9,8 +10,6 @@ import {
   TableCell,
   TableRow,
   TextRun,
-  VerticalAlign,
-  WidthType,
 } from "docx";
 import {
   BulletPointType,
@@ -18,13 +17,6 @@ import {
   SectionType,
   SubSectionType,
 } from "../types/resumeType";
-
-const margin = {
-  top: `${1}in`,
-  bottom: `${1}in`,
-  left: `${2}cm`,
-  right: `${2}cm`,
-} as const;
 
 const noBorder = { style: "none", size: 0, color: "FFFFFF" } as const;
 
@@ -55,7 +47,7 @@ const styling = {
   h4: { size: `${12}pt`, bold: true },
   h5: { size: `${12}pt`, italics: true },
   text: { size: `${12}pt` },
-  gap: { size: 2 },
+  gap: { size: `${1}pt` },
 } as const;
 
 type StylingKey = keyof typeof styling;
@@ -63,9 +55,19 @@ type StylingKey = keyof typeof styling;
 const createText = (text: string, style: StylingKey) =>
   new TextRun({
     text,
-
     ...styling[style],
   });
+
+const createSpace = (height: number) => {
+  if (!height || height < 1) return null;
+  return new Paragraph({
+    children: [new TextRun("")],
+    spacing: {
+      line: height * 20,
+      lineRule: "exact",
+    },
+  });
+};
 
 const createTable = (children: TableCell[]) =>
   new Table({
@@ -188,16 +190,23 @@ const createSubSection = (subSection: SubSectionType) => {
   return elements;
 };
 
-const createSection = (section: SectionType) => {
+const createSection = (section: SectionType, sb: number, sa: number) => {
   const paragraph = [createParagraph([createText(section.title, "h2")])];
+
   const cell = [
-    createTableCell({ children: paragraph, colspan: 2, borders: bottomBorder }),
+    createTableCell({
+      children: paragraph,
+      colspan: 2,
+      borders: bottomBorder,
+    }),
   ];
 
   return [
+    createSpace(sb),
     createTable(cell),
-    ...section.subSections.flatMap((ss) => [...createSubSection(ss)]),
-  ];
+    createSpace(sa),
+    ...section.subSections.flatMap((ss) => createSubSection(ss)),
+  ].filter((el) => el !== null);
 };
 
 const createContacts = (
@@ -240,6 +249,13 @@ const createTitle = (title: string) =>
 
 export const docToDocx = (doc: Resume) => {
   if (!doc) return null;
+  const margin = {
+    top: `${doc.margin}in`,
+    bottom: `${doc.margin}in`,
+    left: `${doc.margin}in`,
+    right: `${doc.margin}in`,
+  } as IPageMarginAttributes;
+
   const dox = new Document({
     styles: {
       default: {
@@ -266,7 +282,9 @@ export const docToDocx = (doc: Resume) => {
             doc.link.label,
             doc.link.url,
           ),
-          ...doc.sections.flatMap((section) => createSection(section)),
+          ...doc.sections.flatMap((section) =>
+            createSection(section, doc.spaceBefore, doc.spaceAfter),
+          ),
         ],
       },
     ],

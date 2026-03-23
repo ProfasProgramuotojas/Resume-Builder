@@ -19,10 +19,13 @@ export type SectionType = {
 };
 
 export type Resume = {
+  margin: number;
+  spaceBefore: number;
+  spaceAfter: number;
   title: string;
   phone: string;
   email: string;
   location: string;
-  link: {label: string, url: string};
+  link: { label: string; url: string };
   sections: SectionType[];
 } | null;
